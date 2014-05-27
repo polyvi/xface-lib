@@ -1,21 +1,24 @@
 {
-  "author": "Apache Software Foundation",
-  "name": "cordova-lib",
-  "description": "Apache Cordova tools core lib and API",
-  "version": "0.21.4-dev",
-  "repository": {
-    "type": "git",
-    "url": "git://git-wip-us.apache.org/repos/asf/cordova-lib.git"
-  },
-  "bugs": {
-    "url" : "https://issues.apache.org/jira/browse/CB",
-    "email" : "dev@cordova.apache.org"
-  },
-  "main": "cordova-lib.js",
+  "name": "xface-lib",
+  "version": "3.3.0-dev",
+  "preferGlobal": "true",
+  "description": "xFace tools core lib and API",
+  "main": "xface-lib",
   "engines": {
     "node": ">=0.9.9"
   },
-  "engineStrict":true,
+  "engineStrict": true,
+  "scripts": {
+    "test": "jasmine-node --color spec-plugman spec-cordova"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.polyvi.com:xface/xface-lib.git"
+  },
+  "bugs": {
+    "url": "http://gitlab.polyvi.com/xface/xface-lib/issues",
+    "email": "chenxy@polyvi.com"
+  },
   "dependencies": {
     "glob": "3.2.x",
     "elementtree": "0.1.5",
@@ -27,6 +30,11 @@
     "dep-graph":"1.1.0",
     "semver": "2.0.x",
     "q": "~0.9",
+    "optimist": "0.6.0",
+    "jsdom-nogyp": "~0.8.3",
+    "archiver": "~0.4.10",
+    "ncallbacks": "1.0.0",
+    "prompt": "0.2.7",
     "npm": "1.3.4",
     "rc": "0.3.0",
     "tar": "0.1.x",
@@ -36,12 +44,9 @@
     "osenv": "0.0.x"
   },
   "devDependencies": {
-    "temp": "0.6.x",
-    "jasmine-node": "~1"  
+    "jasmine-node": "1.8.x"
   },
-  "scripts": {
-    "test": "jasmine-node --color spec-plugman spec-cordova"
-  },
+  "author": "Anis Kadri",
   "contributors": [
     {
       "name": "Brian LeRoux",
@@ -136,26 +141,9 @@
       "email": "stevengill97@gmail.com"
     },
     {
-      "name":"Jesse",
-      "email":"purplecabbage@gmail.com"
-    },
-    {
-        "name":"Anis Kadri"
-    },
-    {
-        "name":"Ryan Willoughby"
-    },
-    {
-        "name":"Brett Rudd"
-    },
-    {
-        "name":"Shazron Abdullah"
-    },
-    {
-        "name":"Steve Gill"
-    },
-    {
-        "name":"Jesse MacFadyen"
+      "name": "Jesse",
+      "email": "purplecabbage@gmail.com"
     }
-  ]
+  ],
+  "license": "Apache version 2.0"
 }
