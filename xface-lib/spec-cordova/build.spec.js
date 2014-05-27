@@ -60,26 +60,26 @@ describe('build command', function() {
                 expect('this call').toBe('fail');
             }, function(err) {
                 expect(err.message).toEqual(
-                    'No platforms added to this project. Please use `cordova platform add <platform>`.'
+                    'No platforms added to this project. Please use `xface platform add <platform>`.'
                 )
             }).fin(done);
         });
 
-        it('should not run outside of a Cordova-based project', function(done) {
+        it('should not run outside of a xFace-based project', function(done) {
             is_cordova.andReturn(false);
 
             Q().then(cordova.raw.build).then(function() {
                 expect('this call').toBe('fail');
             }, function(err) {
                 expect(err.message).toEqual(
-                    'Current working directory is not a Cordova-based project.'
+                    'Current working directory is not a xFace-based project.'
                 )
             }).fin(done);
         });
     });
 
     describe('success', function() {
-        it('should run inside a Cordova-based project with at least one added platform and call both prepare and compile', function(done) {
+        it('should run inside a xFace-based project with at least one added platform and call both prepare and compile', function(done) {
             cordova.raw.build(['android','ios']).then(function() {
                 var opts = {verbose: false, platforms: ['android', 'ios'], options: []};
                 expect(prepare_spy).toHaveBeenCalledWith(opts);
@@ -120,7 +120,7 @@ describe('build command', function() {
                     expect('this call').toBe('fail');
                 }, function(err) {
                     expect(err.message).toEqual(
-                        'No platforms added to this project. Please use `cordova platform add <platform>`.'
+                        'No platforms added to this project. Please use `xface platform add <platform>`.'
                     )
                 }).fin(done);
             });

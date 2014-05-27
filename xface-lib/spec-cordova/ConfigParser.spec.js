@@ -45,7 +45,7 @@ describe('config.xml parser', function () {
 
         describe('package name / id', function() {
             it('should get the (default) packagename', function() {
-                expect(cfg.packageName()).toEqual('io.cordova.hellocordova');
+                expect(cfg.packageName()).toEqual('io.xface.hello');
             });
             it('should allow setting the packagename', function() {
                 cfg.setPackageName('this.is.bat.country');
@@ -65,7 +65,7 @@ describe('config.xml parser', function () {
 
         describe('app name', function() {
             it('should get the (default) app name', function() {
-                expect(cfg.name()).toEqual('Hello Cordova');
+                expect(cfg.name()).toEqual('Hello xFace');
             });
             it('should allow setting the app name', function() {
                 cfg.setName('this.is.bat.country');

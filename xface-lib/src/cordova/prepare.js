@@ -29,6 +29,7 @@ var cordova_util      = require('./util'),
     events            = require('./events'),
     Q                 = require('q'),
     plugman           = require('../plugman/plugman'),
+    xml_helpers       = require('./xml-helpers'),
     util              = require('util');
 
 // Returns a promise.
@@ -56,13 +57,17 @@ exports = module.exports = function prepare(options) {
     var hooks = new hooker(projectRoot);
     return hooks.fire('before_prepare', options)
     .then(function() {
-        var cfg = new ConfigParser(xml);
+        var cfg = new ConfigParser(xml),
+	    internalDev = config.internalDev(projectRoot);
 
         // Iterate over each added platform
         return Q.all(options.platforms.map(function(platform) {
+            var q;
+            if(internalDev) q = Q(cordova_util.getDefaultPlatformLibPath(projectRoot, platform));
+            else q = lazy_load.based_on_config(projectRoot, platform);
+
             var platformPath = path.join(projectRoot, 'platforms', platform);
-            return lazy_load.based_on_config(projectRoot, platform)
-            .then(function(libDir) {
+            return q.then(function(libDir) {
                 var parser = new platforms[platform].parser(platformPath),
                     defaults_xml_path = path.join(platformPath, "cordova", "defaults.xml");
                 //If defaults.xml is present, overwrite platform config.xml with it
@@ -89,7 +94,25 @@ exports = module.exports = function prepare(options) {
                 // Create platfom_www if project was created with older version.
                 if (!fs.existsSync(platform_www)) {
                     shell.mkdir(platform_www);
-                    shell.cp(parser.cordovajs_path(libDir), path.join(platform_www, 'cordova.js'));
+                    shell.cp(parser.cordovajs_path(libDir), path.join(platform_www, 'xface.js'));
+                } else {
+                    // TODO: cordova关于platform_www这一块还不完善，可能造成引擎更新xface.js之后，开发工程的xface.js得不到更新的问题，
+                    // 该问题如果以后得到解决，移除该逻辑
+                    shell.cp('-f', parser.cordovajs_path(libDir), path.join(platform_www, 'xface.js'));
+                }
+
+                // 提前用<project_dir>/config.xml中pre_install_packages配置覆盖平台工程config.xml中对应配置项
+                // 后面的操作用依赖于该配置
+                if(fs.existsSync(xml) && cfg.doc.find('./pre_install_packages')) {
+                    var platformConfig = parser.config_xml(),
+                        platformConfigDoc = xml_helpers.parseElementtreeSync(platformConfig);
+                    var newPackagesTag = et.XML(et.tostring(cfg.doc.find('./pre_install_packages'), {indent:4, xml_declaration:false}));
+                    var root = platformConfigDoc.getroot();
+                    if(platformConfigDoc.find('./pre_install_packages')) {
+                        root.remove(0, platformConfigDoc.find('./pre_install_packages'));
+                    }
+                    root.append(newPackagesTag);
+                    fs.writeFileSync(platformConfig, platformConfigDoc.write({indent:4}), 'utf-8');
                 }
 
                 // Replace the existing web assets with the app master versions
@@ -97,8 +120,8 @@ exports = module.exports = function prepare(options) {
 
                 // Call plugman --prepare for this platform. sets up js-modules appropriately.
                 var plugins_dir = path.join(projectRoot, 'plugins');
-                events.emit('verbose', 'Calling plugman.prepare for platform "' + platform + '"');
-                plugman.prepare(platformPath, platform, plugins_dir);
+                events.emit('verbose', 'Calling xplugin.prepare for platform "' + platform + '"');
+                plugman.prepare(platformPath, platform, plugins_dir, path.join(platformPath, '.xstaging'));
 
                 // Make sure that config changes for each existing plugin is in place
                 var munger = new plugman.config_changes.PlatformMunger(platform, platformPath, plugins_dir);

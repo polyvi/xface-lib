@@ -50,13 +50,13 @@ describe('emulate command', function() {
         spyOn(superspawn, 'spawn').andCallFake(Q);
     });
     describe('failure', function() {
-        it('should not run inside a Cordova-based project with no added platforms by calling util.listPlatforms', function() {
+        it('should not run inside a xFace-based project with no added platforms by calling util.listPlatforms', function() {
             list_platforms.andReturn([]);
             wrapper(cordova.raw.emulate, function() {
-                expect(''+ result).toContain('No platforms added to this project. Please use `cordova platform add <platform>`.');
+                expect(''+ result).toContain('No platforms added to this project. Please use `xface platform add <platform>`.');
             });
         });
-        it('should not run outside of a Cordova-based project', function() {
+        it('should not run outside of a xFace-based project', function() {
             is_cordova.andReturn(false);
             wrapper(cordova.raw.emulate, function() {
                 expect(result instanceof Error).toBe(true);
@@ -65,7 +65,7 @@ describe('emulate command', function() {
     });
 
     describe('success', function() {
-        it('should run inside a Cordova-based project with at least one added platform and call prepare and shell out to the emulate script', function(done) {
+        it('should run inside a xFace-based project with at least one added platform and call prepare and shell out to the emulate script', function(done) {
             cordova.raw.emulate(['android','ios']).then(function(err) {
                 expect(prepare_spy).toHaveBeenCalledWith(['android', 'ios']);
                 expect(superspawn.spawn).toHaveBeenCalledWith(path.join(project_dir, 'platforms', 'android', 'cordova', 'run'), ['--emulator'], jasmine.any(Object));
@@ -107,7 +107,7 @@ describe('emulate command', function() {
                     expect('this call').toBe('fail');
                 }, function(err) {
                     expect(fire).not.toHaveBeenCalled();
-                    expect(''+err).toContain('No platforms added to this project. Please use `cordova platform add <platform>`.')
+                    expect(''+err).toContain('No platforms added to this project. Please use `xface platform add <platform>`.')
                 }).fin(done);
             });
         });

@@ -53,6 +53,7 @@ function add(hooks, projectRoot, targets, opts) {
     }
     var config_json = config.read(projectRoot);
     var platformsDir = path.join(projectRoot, 'platforms');
+    var internalDev = config.internalDev(projectRoot);
 
     // The "platforms" dir is safe to delete, it's almost equivalent to
     // cordova platfrom rm <list of all platforms>
@@ -64,8 +65,13 @@ function add(hooks, projectRoot, targets, opts) {
     .then(function() {
         return targets.reduce(function(soFar, t) {
             return soFar.then(function() {
-                return lazy_load.based_on_config(projectRoot, t)
-                .then(function(libDir) {
+                var q;
+                if(internalDev) {
+                    q = Q(cordova_util.getDefaultPlatformLibPath(projectRoot, t));
+                } else {
+                    q = lazy_load.based_on_config(projectRoot, t);
+                }
+                return q.then(function(libDir) {
                     var template = config_json.lib && config_json.lib[t] && config_json.lib[t].template || null;
                     var copts = null;
                     if ('spawnoutput' in opts) {
@@ -120,14 +126,17 @@ function update(hooks, projectRoot, targets, opts) {
             shell.cp('-f', path.join(parser.www_dir(), 'cordova.js'), path.join(platform_www, 'cordova.js'));
         }
 
+        var internalDev = config.internalDev(projectRoot);
         // First, lazy_load the latest version.
         return hooks.fire('before_platform_update', opts)
         .then(function() {
-            return lazy_load.based_on_config(projectRoot, plat);
+            return internalDev ? Q(cordova_util.getDefaultPlatformLibPath(projectRoot, plat)) : lazy_load.based_on_config(projectRoot, plat);
         }).then(function(libDir) {
             // Call the platform's update script.
             var script = path.join(libDir, 'bin', 'update');
-            return superspawn.spawn(script, [platformPath], { stdio: 'inherit' })
+	    // now only android platform support '--shared' for update command
+            var shared = (plat == 'android' && internalDev) ? '--shared' : '';
+            return superspawn.spawn(script, [platformPath, shared], { stdio: 'inherit' })
             .then(function() {
                 // Copy the new cordova.js from www -> platform_www.
                 copyCordovaJs();
@@ -347,13 +356,17 @@ function call_into_create(target, projectRoot, cfg, libDir, template_dir, opts) 
             events.emit('log', 'Creating ' + target + ' project...');
             var bin = path.join(libDir, 'bin', 'create');
             var args = [];
+            var shared = '';
+            if(config.internalDev(projectRoot)) {
+                args.push('--shared');
+            }
             if (target == 'android') {
                 var platformVersion = fs.readFileSync(path.join(libDir, 'VERSION'), 'UTF-8').trim();
                 if (semver.gt(platformVersion, '3.3.0')) {
                     args.push('--cli');
                 }
             } else if (target == 'ios') {
-                var platformVersion = fs.readFileSync(path.join(libDir, 'CordovaLib', 'VERSION'), 'UTF-8').trim();
+                var platformVersion = fs.readFileSync(path.join(libDir, 'cordova-ios', 'CordovaLib', 'VERSION'), 'UTF-8').trim();
                 args.push('--arc');
                 if (semver.gt(platformVersion, '3.3.0')) {
                     args.push('--cli');
@@ -368,6 +381,8 @@ function call_into_create(target, projectRoot, cfg, libDir, template_dir, opts) 
             }
             return superspawn.spawn(bin, args, opts || { stdio: 'inherit' })
             .then(function() {
+                var stagingDir = path.join(output, '.xstaging');
+                !fs.existsSync(stagingDir) && shell.mkdir('-p', stagingDir);
                 return require('./cordova').raw.prepare(target);
             })
             .then(function() {

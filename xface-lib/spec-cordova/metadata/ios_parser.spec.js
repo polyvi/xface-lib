@@ -27,6 +27,7 @@ var platforms = require('../../src/cordova/platforms'),
     Q = require('q'),
     config = require('../../src/cordova/config'),
     ConfigParser = require('../../src/cordova/ConfigParser'),
+    mapp_helpers = require('../../src/plugman/multiapp_helpers'),
     cordova = require('../../src/cordova/cordova');
 
 // Create a real config object before mocking out everything.
@@ -38,6 +39,9 @@ describe('ios project parser', function () {
     beforeEach(function() {
         custom = spyOn(config, 'has_custom_path').andReturn(false);
         readdir = spyOn(fs, 'readdirSync').andReturn(['test.xcodeproj']);
+        spyOn(config, 'internalDev').andReturn(false);
+        spyOn(util, 'getDefaultAppId').andReturn('helloxface');
+        spyOn(mapp_helpers, 'getInstalledApps').andReturn(['helloxface']);
     });
 
     function wrapper(p, done, post) {
@@ -129,7 +133,7 @@ describe('ios project parser', function () {
         });
         describe('www_dir method', function() {
             it('should return /www', function() {
-                expect(p.www_dir()).toEqual(path.join(ios_proj, 'www'));
+                expect(p.www_dir()).toEqual(path.join(ios_proj, 'xface3', 'helloxface'));
             });
         });
         describe('config_xml method', function() {

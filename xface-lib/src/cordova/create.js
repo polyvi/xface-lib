@@ -37,14 +37,14 @@ var DEFAULT_NAME = "HelloCordova",
  * @dir - directory where the project will be created. Required.
  * @id - app id. Optional, default is DEFAULT_ID.
  * @name - app name. Optional, default is DEFAULT_NAME.
- * @cfg - extra config to be saved in .cordova/config.json
+ * @cfg - extra config to be saved in .xface/config.json
  **/
 // Returns a promise.
 module.exports = create;
 function create(dir, id, name, cfg) {
     if (!dir ) {
         return Q.reject(new CordovaError(
-            'At least the dir must be provided to create new project. See `corova help`.'
+            'At least the dir must be provided to create new project. See `xface help`.'
         ));
     }
 
@@ -59,19 +59,19 @@ function create(dir, id, name, cfg) {
     // Make absolute.
     dir = path.resolve(dir);
 
-    events.emit('log', 'Creating a new cordova project with name "' + name + '" and id "' + id + '" at location "' + dir + '"');
+    events.emit('log', 'Creating a new xface project with name "' + name + '" and id "' + id + '" at location "' + dir + '"');
 
     var www_dir = path.join(dir, 'www');
 
     // dir must be either empty or not exist at all.
 
-    // dir must be either empty except for .cordova config file or not exist at all..
+    // dir must be either empty except for .xface config file or not exist at all..
     var sanedircontents = function (d) {
         var contents = fs.readdirSync(d);
         if (contents.length === 0) {
             return true;
         } else if (contents.length == 1) {
-            if (contents[0] == '.cordova') {
+            if (contents[0] == '.xface') {
                 return true;
             }
         }
@@ -82,7 +82,7 @@ function create(dir, id, name, cfg) {
         return Q.reject(new CordovaError('Path already exists and is not empty: ' + dir));
     }
 
-    // Read / Write .cordova/config.json file if necessary.
+    // Read / Write .xface/config.json file if necessary.
     var config_json = config(dir, cfg);
 
     var p;
@@ -116,11 +116,11 @@ function create(dir, id, name, cfg) {
             });
         }
     } else {
-        // No custom www - use stock cordova-hello-world-app.
-        events.emit('verbose', 'Using stock cordova hello-world application.');
+        // No custom www - use stock xface-default-app.
+        events.emit('verbose', 'Using stock xface default application.');
         p = lazy_load.cordova('www')
         .then(function(d) {
-            events.emit('verbose', 'Copying stock Cordova www assets into "' + www_dir + '"');
+            events.emit('verbose', 'Copying stock xFace www assets into "' + www_dir + '"');
             return d;
         });
     }

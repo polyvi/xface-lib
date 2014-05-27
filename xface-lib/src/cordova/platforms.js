@@ -21,13 +21,13 @@ module.exports = {
     'ios' : {
         hostos : ['darwin'],
         parser : './metadata/ios_parser',
-        url    : 'https://git-wip-us.apache.org/repos/asf?p=cordova-ios.git',
-        version: '3.5.0'
+        url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-ios.git',
+        version: '3.2.0'
     },
     'android' : {
         parser : './metadata/android_parser',
-        url    : 'https://git-wip-us.apache.org/repos/asf?p=cordova-android.git',
-        version: '3.5.0'
+        url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-android.git',
+        version: '3.2.0'
     },
     'ubuntu' : {
         hostos : ['linux'],
@@ -50,9 +50,8 @@ module.exports = {
     'wp8' : {
         hostos : ['win32'],
         parser : './metadata/wp8_parser',
-        url    : 'https://git-wip-us.apache.org/repos/asf?p=cordova-wp8.git',
-        version: '3.5.0',
-        subdirectory: 'wp8'
+        url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-wp8.git',
+        version: '3.2.0'
     },
     'blackberry10' : {
         parser : './metadata/blackberry10_parser',
@@ -62,8 +61,8 @@ module.exports = {
     },
     'www':{
         hostos : [],
-        url    : 'https://git-wip-us.apache.org/repos/asf?p=cordova-app-hello-world.git',
-        version: '3.5.0'
+        url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-default-app.git',
+        version: '3.2.0'
     },
     'firefoxos':{
         parser: './metadata/firefoxos_parser',
@@ -76,6 +75,10 @@ module.exports = {
         url    : 'https://git-wip-us.apache.org/repos/asf?p=cordova-windows.git',
         version: '3.5.0',
         subdirectory: 'windows8'
+    },
+    'test-template':{
+        url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-test-template.git',
+        version: '3.2.0'
     }
 };
 

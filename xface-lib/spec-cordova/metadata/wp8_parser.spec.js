@@ -27,6 +27,7 @@ var platforms = require('../../src/cordova/platforms'),
     Q = require('q'),
     child_process = require('child_process'),
     config = require('../../src/cordova/config'),
+    mapp_helpers = require('../../src/plugman/multiapp_helpers'),
     ConfigParser = require('../../src/cordova/ConfigParser'),
     CordovaError = require('../../src/CordovaError'),
     cordova = require('../../src/cordova/cordova');
@@ -46,7 +47,10 @@ describe('wp8 project parser', function() {
         custom = spyOn(config, 'has_custom_path').andReturn(false);
         readdir = spyOn(fs, 'readdirSync').andReturn(['test.csproj']);
         projXml = manifestXml = null;
-        spyOn(xmlHelpers, 'parseElementtreeSync').andCallFake(function(path) {
+        spyOn(config, 'internalDev').andReturn(false);
+        spyOn(util, 'getDefaultAppId').andReturn('helloxface');
+	spyOn(mapp_helpers, 'getInstalledApps').andReturn(['helloxface']);
+	spyOn(xmlHelpers, 'parseElementtreeSync').andCallFake(function(path) {
             if (/WMAppManifest.xml$/.exec(path)) {
                 return manifestXml = new et.ElementTree(et.XML('<foo><App Title="s"><PrimaryToken /><RootNamespace/><SilverlightAppEntry/><XapFilename/><AssemblyName/></App></foo>'));
             } else if (/csproj$/.exec(path)) {
@@ -153,7 +157,7 @@ describe('wp8 project parser', function() {
         });
         describe('www_dir method', function() {
             it('should return www', function() {
-                expect(p.www_dir()).toEqual(path.join(wp8_proj, 'www'));
+                expect(p.www_dir()).toEqual(path.join(wp8_proj, 'xface3', 'helloxface'));
             });
         });
         describe('config_xml method', function() {
@@ -162,10 +166,6 @@ describe('wp8 project parser', function() {
             });
         });
         describe('update_www method', function() {
-            var update_csproj;
-            beforeEach(function() {
-                update_csproj = spyOn(p, 'update_csproj');
-            });
             it('should rm project-level www and cp in platform agnostic www', function() {
                 p.update_www();
                 expect(rm).toHaveBeenCalled();
@@ -178,7 +178,6 @@ describe('wp8 project parser', function() {
                 config = spyOn(p, 'update_from_config');
                 www = spyOn(p, 'update_www');
                 svn = spyOn(util, 'deleteSvnFolders');
-                csproj = spyOn(p, 'update_csproj');
                 exists.andReturn(false);
             });
             it('should call update_from_config', function(done) {

@@ -26,6 +26,13 @@ var path          = require('path'),
 var configCache = {};
 var autoPersist = true;
 
+/**
+ * 将opts中的属性值以json格式添加到<proj_root>/.xface/config.json中
+ * config.json包含的属性主要有id, name, lib, dev_type。id和name分别为工程的id和名称，
+ * dev_type用于标识是内部项目开发还是外部开发者使用（'internal'表示内部项目开发，不存在或者为空时为外部使用）
+ * @param {String} project_root
+ * @param {Object} opts
+ */
 function config(project_root, opts) {
     var json = config.read(project_root);
     for (var p in opts) {
@@ -46,7 +53,7 @@ config.setAutoPersist = function(value) {
 config.read = function get_config(project_root) {
     var data = configCache[project_root];
     if (data === undefined) {
-        var configPath = path.join(project_root, '.cordova', 'config.json');
+        var configPath = path.join(project_root, '.xface', 'config.json');
         if (!fs.existsSync(configPath)) {
             data = '{}';
         } else {
@@ -58,12 +65,12 @@ config.read = function get_config(project_root) {
 };
 
 config.write = function set_config(project_root, json) {
-    var configPath = path.join(project_root, '.cordova', 'config.json');
+    var configPath = path.join(project_root, '.xface', 'config.json');
     var contents = JSON.stringify(json, null, 4);
     configCache[project_root] = contents;
     // Don't write the file for an empty config.
-    if (contents != '{}' || fs.existsSync(configPath)) {
-        shell.mkdir('-p', path.join(project_root, '.cordova'));
+    if (contents != '{}' || !fs.existsSync(configPath)) {
+        shell.mkdir('-p', path.join(project_root, '.xface'));
         fs.writeFileSync(configPath, contents, 'utf-8');
     }
     return json;
@@ -77,6 +84,15 @@ config.has_custom_path = function(project_root, platform) {
         else if (uri.protocol && uri.protocol[1] ==':') return uri.href;
     }
     return false;
+};
+
+/**
+ * 判断指定工程是否为内部开发使用的工程
+ * @param {String} project_root 工程根路径
+ */
+config.internalDev = function(project_root) {
+    var json = config.read(project_root);
+    return json.dev_type === 'internal';
 };
 
 module.exports = config;

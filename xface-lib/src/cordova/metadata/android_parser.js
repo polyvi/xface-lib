@@ -24,6 +24,7 @@ var fs            = require('fs'),
     shell         = require('shelljs'),
     project_config= require('../config'),
     Q             = require('q'),
+    xplugin       = require('../../plugman/plugman'),
     ConfigParser  = require('../ConfigParser'),
     CordovaError  = require('../../CordovaError');
 
@@ -217,16 +218,8 @@ module.exports.prototype = {
         fs.writeFileSync(this.manifest, manifest.write({indent: 4}), 'utf-8');
 
         var orig_pkgDir = path.join(this.path, 'src', path.join.apply(null, orig_pkg.split('.')));
-        var java_files = fs.readdirSync(orig_pkgDir).filter(function(f) {
-          return f.indexOf('.svn') == -1 && f.indexOf('.java') >= 0 && fs.readFileSync(path.join(orig_pkgDir, f), 'utf-8').match(/extends\s+CordovaActivity/);
-        });
-        if (java_files.length == 0) {
-          throw new Error('No Java files found which extend CordovaActivity.');
-        } else if(java_files.length > 1) {
-          events.emit('log', 'Multiple candidate Java files (.java files which extend CordovaActivity) found. Guessing at the first one, ' + java_files[0]);
-        }
 
-        var orig_java_class = java_files[0];
+        var orig_java_class = xplugin.platforms['android'].activity_name(this.path) + '.java';
         var pkgDir = path.join(this.path, 'src', path.join.apply(null, pkg.split('.')));
         shell.mkdir('-p', pkgDir);
         var orig_javs = path.join(orig_pkgDir, orig_java_class);
@@ -239,7 +232,8 @@ module.exports.prototype = {
 
     // Returns the platform-specific www directory.
     www_dir:function() {
-        return path.join(this.path, 'assets', 'www');
+        var defaultAppId = util.getDefaultAppId(this.path);
+        return path.join(this.path, 'assets', 'xface3', defaultAppId);
     },
 
     config_xml:function(){
@@ -248,7 +242,7 @@ module.exports.prototype = {
 
     // Used for creating platform_www in projects created by older versions.
     cordovajs_path:function(libDir) {
-        var jsPath = path.join(libDir, 'framework', 'assets', 'www', 'cordova.js');
+        var jsPath = path.join(libDir, 'framework', 'assets', 'xface.js');
         return path.resolve(jsPath);
     },
 
@@ -257,14 +251,20 @@ module.exports.prototype = {
         var projectRoot = util.isCordova(this.path);
         var app_www = util.projectWww(projectRoot);
         var platform_www = path.join(this.path, 'platform_www');
+        var xface3_dir = path.join(this.path, 'assets', 'xface3');
 
         // Clear the www dir
-        shell.rm('-rf', this.www_dir());
-        shell.mkdir(this.www_dir());
+        shell.rm('-rf', xface3_dir);
+        shell.mkdir(xface3_dir);
         // Copy over all app www assets
-        shell.cp('-rf', path.join(app_www, '*'), this.www_dir());
-        // Copy over stock platform www assets (cordova.js)
-        shell.cp('-rf', path.join(platform_www, '*'), this.www_dir());
+        shell.cp('-rf', path.join(app_www, '*'), xface3_dir);
+        // Copy over stock platform www assets (xface.js)
+        var appIds = xplugin.multiapp_helpers.getInstalledApps(this.path, 'android');
+        var xface3Dir = path.dirname(this.www_dir());
+        appIds.forEach(function(id) {
+            var appPath = path.join(xface3Dir, id);
+            shell.cp('-rf', path.join(platform_www, '*'), appPath);
+        });
     },
 
     // update the overrides folder into the www folder
@@ -273,7 +273,12 @@ module.exports.prototype = {
         var merges_path = path.join(util.appDir(projectRoot), 'merges', 'android');
         if (fs.existsSync(merges_path)) {
             var overrides = path.join(merges_path, '*');
-            shell.cp('-rf', overrides, this.www_dir());
+            var appIds = xplugin.multiapp_helpers.getInstalledApps(this.path, 'android');
+            var xface3Dir = path.dirname(this.www_dir());
+            appIds.forEach(function(id) {
+                var appPath = path.join(xface3Dir, id);
+                shell.cp('-rf', overrides, appPath);
+            });
         }
     },
 

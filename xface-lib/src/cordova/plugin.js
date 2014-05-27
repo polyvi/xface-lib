@@ -97,6 +97,9 @@ module.exports = function plugin(command, targets, opts) {
             } else if (opts.searchpath) {
                 searchPath = opts.searchpath.concat(searchPath);
             }
+	    if(config.internalDev(projectRoot)) {
+	        searchPath = searchPath.push(cordova_util.getRepoSetPath());
+	    }
             // Blank it out to appease unit tests.
             if (searchPath.length === 0) {
                 searchPath = undefined;
@@ -125,6 +128,7 @@ module.exports = function plugin(command, targets, opts) {
                                     parser = new platforms[platform].parser(platformRoot),
                                     options = {
                                         cli_variables: {},
+                                        www_dir: path.join(platformRoot, '.xstaging'),
                                         searchpath: searchPath
                                     },
                                     tokens,
@@ -141,7 +145,7 @@ module.exports = function plugin(command, targets, opts) {
                                     }
                                 }
 
-                                events.emit('verbose', 'Calling plugman.install on plugin "' + dir + '" for platform "' + platform + '" with options "' + JSON.stringify(options)  + '"');
+                                events.emit('verbose', 'Calling xplugin.install on plugin "' + dir + '" for platform "' + platform + '" with options "' + JSON.stringify(options)  + '"');
                                 return plugman.raw.install(platform, platformRoot, path.basename(dir), pluginsDir, options);
                             });
                         }, Q());
@@ -184,8 +188,8 @@ module.exports = function plugin(command, targets, opts) {
                                     events.emit('results','"'+target + '" plugin is restorable, call "cordova save plugins" to remove it from restorable plugins list');
                                 }
                             }                            
-                            events.emit('verbose', 'Calling plugman.uninstall on plugin "' + target + '" for platform "' + platform + '"');
-                            return plugman.raw.uninstall.uninstallPlatform(platform, platformRoot, target, path.join(projectRoot, 'plugins'));
+                            events.emit('verbose', 'Calling xplugin.uninstall on plugin "' + target + '" for platform "' + platform + '"');
+                            return plugman.raw.uninstall.uninstallPlatform(platform, platformRoot, target, path.join(projectRoot, 'plugins'), {'www_dir' : path.join(platformRoot, '.xstaging')});
                         });
                     }, Q())
                     .then(function() {
@@ -224,7 +228,7 @@ function list(projectRoot, hooks) {
     })
     .then(function(plugins) {
         if (plugins.length === 0) {
-            events.emit('results', 'No plugins added. Use `cordova plugin add <plugin>`.');
+            events.emit('results', 'No plugins added. Use `xface plugin add <plugin>`.');
             return;
         }
         var pluginsDict = {};

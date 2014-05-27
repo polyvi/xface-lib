@@ -53,7 +53,7 @@ module.exports = function info() {
     var projectRoot = cordova_util.cdProjectRoot();
     var output = '';
     if (!projectRoot) {
-        return Q.reject(new Error('Current working directory is not a Cordova-based project.'));
+        return Q.reject(new Error('Current working directory is not a xFace-based project.'));
     }
 
     //Array of functions, Q.allSettled
@@ -62,7 +62,7 @@ module.exports = function info() {
             //Get Node version
             Q('Node version: ' + process.version),
             //Get Cordova version
-            Q('Cordova version: ' + package.version),
+            Q('xFace version: ' + package.version),
             //Get project config.xml file using ano
             getProjectConfig(projectRoot),
             //Get list of plugins

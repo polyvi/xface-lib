@@ -32,12 +32,12 @@ var fs            = require('fs'),
 module.exports = function ios_parser(project) {
     try {
         var xcodeproj_dir = fs.readdirSync(project).filter(function(e) { return e.match(/\.xcodeproj$/i); })[0];
-        if (!xcodeproj_dir) throw new CordovaError('The provided path "' + project + '" is not a Cordova iOS project.');
+        if (!xcodeproj_dir) throw new CordovaError('The provided path "' + project + '" is not a xFace iOS project.');
         this.xcodeproj = path.join(project, xcodeproj_dir);
         this.originalName = this.xcodeproj.substring(this.xcodeproj.lastIndexOf(path.sep)+1, this.xcodeproj.indexOf('.xcodeproj'));
         this.cordovaproj = path.join(project, this.originalName);
     } catch(e) {
-        throw new CordovaError('The provided path "'+project+'" is not a Cordova iOS project.');
+        throw new CordovaError('The provided path "'+project+'" is not a xFace iOS project.');
     }
     this.path = project;
     this.pbxproj = path.join(this.xcodeproj, 'project.pbxproj');
@@ -145,7 +145,8 @@ module.exports.prototype = {
 
     // Returns the platform-specific www directory.
     www_dir:function() {
-        return path.join(this.path, 'www');
+        var defaultAppId = util.getDefaultAppId(this.path);
+        return path.join(this.path, 'xface3', defaultAppId);
     },
 
     config_xml:function(){
@@ -154,7 +155,7 @@ module.exports.prototype = {
 
     // Used for creating platform_www in projects created by older versions.
     cordovajs_path:function(libDir) {
-        var jsPath = path.join(libDir, 'CordovaLib', 'cordova.js');
+        var jsPath = path.join(libDir, 'xFaceLib', 'xFaceLib', 'xface.js');
         return path.resolve(jsPath);
     },
 
@@ -163,14 +164,20 @@ module.exports.prototype = {
         var projectRoot = util.isCordova(this.path);
         var app_www = util.projectWww(projectRoot);
         var platform_www = path.join(this.path, 'platform_www');
+        var xface3_dir = path.join(this.path, 'xface3');
 
         // Clear the www dir
-        shell.rm('-rf', this.www_dir());
-        shell.mkdir(this.www_dir());
+        shell.rm('-rf', xface3_dir);
+        shell.mkdir(xface3_dir);
         // Copy over all app www assets
-        shell.cp('-rf', path.join(app_www, '*'), this.www_dir());
-        // Copy over stock platform www assets (cordova.js)
-        shell.cp('-rf', path.join(platform_www, '*'), this.www_dir());
+        shell.cp('-rf', path.join(app_www, '*'), xface3_dir);
+        // Copy over stock platform www assets (xface.js)
+        var appIds = require('xplugin').multiapp_helpers.getInstalledApps(this.path, 'ios');
+        var xface3Dir = path.dirname(this.www_dir());
+        appIds.forEach(function(id) {
+            var appPath = path.join(xface3Dir, id);
+            shell.cp('-rf', path.join(platform_www, '*'), appPath);
+        });
     },
 
     // update the overrides folder into the www folder
@@ -179,7 +186,12 @@ module.exports.prototype = {
         var merges_path = path.join(util.appDir(projectRoot), 'merges', 'ios');
         if (fs.existsSync(merges_path)) {
             var overrides = path.join(merges_path, '*');
-            shell.cp('-rf', overrides, this.www_dir());
+            var appIds = require('xplugin').multiapp_helpers.getInstalledApps(this.path, 'ios');
+            var xface3Dir = path.dirname(this.www_dir());
+            appIds.forEach(function(id) {
+                var appPath = path.join(xface3Dir, id);
+                shell.cp('-rf', overrides, appPath);
+            });
         }
     },
 

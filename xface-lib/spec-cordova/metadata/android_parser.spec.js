@@ -48,7 +48,11 @@ describe('android project parser', function() {
     var exists;
     beforeEach(function() {
         exists = spyOn(fs, 'existsSync').andReturn(true);
+        spyOn(config, 'internalDev').andReturn(false);
         spyOn(config, 'has_custom_path').andReturn(false);
+        spyOn(util, 'getDefaultAppId').andReturn('helloxface');
+        spyOn(mapp_helpers, 'getInstalledApps').andReturn(['helloxface']);
+        spyOn(require('xplugin').platforms['android'], 'activity_name').andReturn('com.polyvi.Activity');
     });
 
     function wrapper(p, done, post) {
@@ -149,7 +153,7 @@ describe('android project parser', function() {
         });
         describe('www_dir method', function() {
             it('should return assets/www', function() {
-                expect(p.www_dir()).toEqual(path.join(android_proj, 'assets', 'www'));
+                expect(p.www_dir()).toEqual(path.join(android_proj, 'assets', 'xface3', 'helloxface'));
             });
         });
         describe('config_xml method', function() {

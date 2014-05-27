@@ -28,7 +28,7 @@ var util  = require('./util'),
 
 module.exports = function hooker(root) {
     var r = util.isCordova(root);
-    if (!r) throw new CordovaError('Not a Cordova project ("'+root+'"), can\'t use hooks.');
+    if (!r) throw new CordovaError('Not a xFace project ("'+root+'"), can\'t use hooks.');
     else this.root = r;
 };
 
@@ -67,7 +67,7 @@ module.exports.prototype = {
         var handlers = events.listeners(hook);
         return execute_handlers_serially(handlers, opts)
         .then(function() {
-            return fireHooksInDir(path.join(root, '.cordova', 'hooks', hook));
+            return fireHooksInDir(path.join(root, '.xface', 'hooks', hook));
         }).then(function() {
             return fireHooksInDir(path.join(root, 'hooks', hook));
         });

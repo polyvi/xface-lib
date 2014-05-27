@@ -47,7 +47,7 @@ module.exports = function wp8_parser(project) {
 // Returns a promise.
 module.exports.check_requirements = function(project_root) {
     events.emit('log', 'Checking wp8 requirements...');
-    var lib_path = path.join(util.libDirectory, 'wp', 'cordova', require('../platforms').wp8.version, 'wp8');
+    var lib_path = util.getDefaultPlatformLibPath(project_root, 'wp8');
     var custom_path = config.has_custom_path(project_root, 'wp8');
     if (custom_path) {
         lib_path = path.join(custom_path, 'wp8');
@@ -166,7 +166,8 @@ module.exports.prototype = {
     },
     // Returns the platform-specific www directory.
     www_dir:function() {
-        return path.join(this.wp8_proj_dir, 'www');
+        var defaultAppId = util.getDefaultAppId(this.wp8_proj_dir);
+        return path.join(this.wp8_proj_dir, 'xface3', defaultAppId);
     },
     config_xml:function() {
         return path.join(this.wp8_proj_dir, 'config.xml');
@@ -182,7 +183,7 @@ module.exports.prototype = {
 
     // Used for creating platform_www in projects created by older versions.
     cordovajs_path:function(libDir) {
-        var jsPath = path.join(libDir, '..', 'common', 'www', 'cordova.js');
+        var jsPath = path.join(libDir, 'xFaceLib', 'xFaceLib', 'xface.js');
         return path.resolve(jsPath);
     },
 
@@ -191,78 +192,27 @@ module.exports.prototype = {
         var projectRoot = util.isCordova(this.wp8_proj_dir);
         var app_www = util.projectWww(projectRoot);
         var platform_www = path.join(this.wp8_proj_dir, 'platform_www');
+        var xface3_dir = path.join(this.wp8_proj_dir, 'xface3');
 
         // Clear the www dir
-        shell.rm('-rf', this.www_dir());
-        shell.mkdir(this.www_dir());
+        shell.rm('-rf', xface3_dir);
+        shell.mkdir(xface3_dir);
         // Copy over all app www assets
-        shell.cp('-rf', path.join(app_www, '*'), this.www_dir());
+        shell.cp('-rf', path.join(app_www, '*'), xface3_dir);
 
         // Copy all files from merges directories - wp generic first, then wp8 specific.
         this.copy_merges('wp');
         this.copy_merges('wp8');
 
-        // Copy over stock platform www assets (cordova.js)
-        shell.cp('-rf', path.join(platform_www, '*'), this.www_dir());
+        // Copy over stock platform www assets (xface.js)
+        var appIds = require('xplugin').multiapp_helpers.getInstalledApps(this.wp8_proj_dir, 'wp8');
+        var xface3Dir = path.dirname(this.www_dir());
+        appIds.forEach(function(id) {
+            var appPath = path.join(xface3Dir, id);
+            shell.cp('-rf', path.join(platform_www, '*'), appPath);
+        });
     },
 
-    // updates the csproj file to explicitly list all www content.
-    update_csproj:function() {
-        var csproj_xml = xml.parseElementtreeSync(this.csproj_path);
-        // remove any previous references to the www files
-        var item_groups = csproj_xml.findall('ItemGroup');
-        for (var i = 0, l = item_groups.length; i < l; i++) {
-            var group = item_groups[i];
-            var files = group.findall('Content');
-            for (var j = 0, k = files.length; j < k; j++) {
-                var file = files[j];
-                if (file.attrib.Include.substr(0, 3) == 'www') {
-                    // remove file reference
-                    group.remove(0, file);
-                    // remove ItemGroup if empty
-                    var new_group = group.findall('Content');
-                    if(new_group.length < 1) {
-                        csproj_xml.getroot().remove(0, group);
-                    }
-                }
-            }
-        }
-
-        // now add all www references back in from the root www folder
-        var www_files = this.folder_contents('www', this.www_dir());
-        for(file in www_files) {
-            var item = new et.Element('ItemGroup');
-            var content = new et.Element('Content');
-            content.attrib.Include = www_files[file];
-            item.append(content);
-            csproj_xml.getroot().append(item);
-        }
-        // save file
-        fs.writeFileSync(this.csproj_path, csproj_xml.write({indent:4}), 'utf-8');
-    },
-    // Returns an array of all the files in the given directory with relative paths
-    // - name     : the name of the top level directory (i.e all files will start with this in their path)
-    // - dir     : the directory whos contents will be listed under 'name' directory
-    folder_contents:function(name, dir) {
-        var results = [];
-        var folder_dir = fs.readdirSync(dir);
-        for(item in folder_dir) {
-            var stat = fs.statSync(path.join(dir, folder_dir[item]));
-
-            if(stat.isDirectory()) {
-                var sub_dir = this.folder_contents(path.join(name, folder_dir[item]), path.join(dir, folder_dir[item]));
-                //Add all subfolder item paths
-                for(sub_item in sub_dir) {
-                    results.push(sub_dir[sub_item]);
-                }
-            }
-            else if(stat.isFile()) {
-                results.push(path.join(name, folder_dir[item]));
-            }
-            // else { it is a FIFO, or a Socket or something ... }
-        }
-        return results;
-    },
 
     // calls the nessesary functions to update the wp8 project
     // Returns a promise.
@@ -280,7 +230,6 @@ module.exports.prototype = {
         var hooks = new hooker(projectRoot);
         return hooks.fire('pre_package', { wwwPath:this.www_dir(), platforms: ['wp8']  })
         .then(function() {
-            that.update_csproj();
             util.deleteSvnFolders(that.www_dir());
         });
     }
