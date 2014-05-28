@@ -73,6 +73,7 @@ describe('start', function() {
         proc = spyOn(actions.prototype, 'process').andReturn( Q(true) );
         actions_push = spyOn(actions.prototype, 'push');
         ca = spyOn(actions.prototype, 'createAction');
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'findDefaultAppId').andReturn('helloxface');
     });
     it('start', function() {
         shell.rm('-rf', project);
@@ -143,6 +144,7 @@ describe('install', function() {
         rm = spyOn(shell, 'rm').andReturn(true);
         add_to_queue = spyOn(config_changes, 'add_installed_plugin_to_prepare_queue');
         done = false;
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'findDefaultAppId').andReturn('helloxface');
     });
 
     describe('success', function() {

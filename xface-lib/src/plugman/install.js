@@ -75,7 +75,8 @@ function possiblyFetch(id, plugins_dir, options) {
 
     var opts = underscore.extend({}, options, {
         link: false,
-        client: 'plugman'
+        client: 'plugman',
+        searchpath: options.searchpath
     });
 
     // if plugin doesnt exist, use fetch to get it.
@@ -484,7 +485,8 @@ function installDependency(dep, install, options) {
             is_top_level: false,
             subdir: dep.subdir,
             git_ref: dep.git_ref,
-            expected_id: dep.id
+            expected_id: dep.id,
+	    searchpath: options.searchpath
         });
 
         var dep_src = dep.url.length ? dep.url : dep.id;
@@ -516,7 +518,9 @@ function handleInstall(actions, plugin_id, plugin_et, platform, project_dir, plu
             resourceFiles = platformTag.findall('./resource-file'),
             frameworkFiles = platformTag.findall('./framework[@custom="true"]'), // CB-5238 adding only custom frameworks
             libFiles = platformTag.findall('./lib-file');
-
+        var proguardConfig = platformTag.find('./proguard-config'),
+            androidApplication = platformTag.find('./android-application'),
+            rootActivity = platformTag.find('./root-activity');
 
         // queue up native stuff
         sourceFiles && sourceFiles.forEach(function(item) {
@@ -554,6 +558,27 @@ function handleInstall(actions, plugin_id, plugin_et, platform, project_dir, plu
                                                 [item, project_dir, plugin_id]));
 
         });
+
+        if(proguardConfig) {
+            actions.push(actions.createAction(handler["proguard-config"].install,
+	                                        [proguardConfig, project_dir],
+						handler["proguard-config"].uninstall,
+						[proguardConfig, project_dir]));
+        }
+
+        if(androidApplication) {
+            actions.push(actions.createAction(handler["android-application"].install,
+	                                        [androidApplication, plugins_dir, project_dir],
+						handler["android-application"].uninstall,
+						[androidApplication, plugins_dir, project_dir]));
+        }
+
+        if(rootActivity) {
+            actions.push(actions.createAction(handler["root-activity"].install,
+	                                        [rootActivity, plugins_dir, project_dir],
+						handler["root-activity"].uninstall,
+						[rootActivity, plugins_dir, project_dir]));
+        }
     }
 
     // run through the action stack

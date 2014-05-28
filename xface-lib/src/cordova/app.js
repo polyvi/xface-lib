@@ -8,7 +8,7 @@ var fs = require('fs'),
     xfaceUtil = require('./util'),
     events = require('./events'),
     lazy_load = require('./lazy_load'),
-    xml_helpers = require('./xml-helpers');
+    xml_helpers = require('../util/xml-helpers');
 
 var TAG_A_EXPRESSION = '<a\\s+.*?href\\s*=\\s*"(.*?)".*?(/>|>.*?</a>)',
     CORDOVA_INCL_JS = "cordova-incl.js";
@@ -36,7 +36,7 @@ var BASE_TEST_FRAMEWORK_FILES = [
 module.exports = function(command, targets, testTemplate) {
     if(!String(command)) command = 'ls';
     return Q.try(function() {
-        var xfaceProj = xfaceUtil.isxFace(process.cwd());
+        var xfaceProj = xfaceUtil.isCordova(process.cwd());
         if (!xfaceProj) {
             return Q.reject(new Error('Current working directory is not a xFace-based project.'));
         }
@@ -357,7 +357,7 @@ module.exports.installApp = function(projRoot, apps, dirAsId) {
             // write app id to app.xml if needed
             var appXml = path.join(destAppDir, 'app.xml');
             if(!fs.existsSync(appXml)) {
-                var content = fs.readFileSync(path.join(__dirname, '..', 'templates', 'app.xml'), 'utf-8');
+                var content = fs.readFileSync(path.join(__dirname, '..', '..', 'templates', 'app.xml'), 'utf-8');
                 content = content.replace(/TEMPLATE-APP-ID/gm, appId);
                 fs.writeFileSync(appXml, content, 'utf-8');
             }

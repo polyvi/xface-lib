@@ -68,6 +68,7 @@ describe('ios project handler', function() {
     beforeEach(function() {
         shell.mkdir('-p', temp);
         shell.mkdir('-p', plugins_dir);
+        spyOn(require('../../src/plugman/util/multiapp-helpers'), 'findDefaultAppId').andReturn('helloxface');
     });
     afterEach(function() {
         shell.rm('-rf', temp);
@@ -76,7 +77,7 @@ describe('ios project handler', function() {
 
     describe('www_dir method', function() {
         it('should return cordova-ios project www location using www_dir', function() {
-            expect(ios.www_dir(path.sep)).toEqual(path.sep + 'www');
+            expect(ios.www_dir(path.sep)).toEqual(path.sep + 'xface3' + path.sep + 'helloxface');
         });
     });
 

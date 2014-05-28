@@ -131,7 +131,7 @@ module.exports = {
             return Q.ninvoke(npm.commands, 'cache', ['add', plugin]);
         })
         .then(function(info) {
-            var cl = (client === 'plugman' ? 'plugman' : 'cordova-cli');
+            var cl = (client === 'xplugin' ? 'xplugin' : 'xface-cli');
             bumpCounter(info, cl);
             var pluginDir = path.resolve(npm.cache, info.name, info.version, 'package');
             return pluginDir;
@@ -184,8 +184,8 @@ function initSettings() {
     module.exports.settings =
     rc('plugman', {
          cache: plugmanCacheDir,
-         registry: 'http://registry.cordova.io',
-         logstream: fs.createWriteStream(path.resolve(plugmanConfigDir, 'plugman.log')),
+         registry: 'http://plugins.polyvi.net:5984/api/_design/scratch/_rewrite',
+         logstream: fs.createWriteStream(path.resolve(plugmanConfigDir, 'xplugin.log')),
          userconfig: path.resolve(plugmanConfigDir, 'config')
     });
     return Q(settings);

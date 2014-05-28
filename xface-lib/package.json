@@ -44,7 +44,8 @@
     "osenv": "0.0.x"
   },
   "devDependencies": {
-    "jasmine-node": "1.8.x"
+    "temp": "0.6.x",
+    "jasmine-node": "~1"
   },
   "author": "Anis Kadri",
   "contributors": [

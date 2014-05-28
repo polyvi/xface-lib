@@ -147,6 +147,11 @@ function findLocalPlugin(plugin_id, searchpath) {
         var files = fs.readdirSync(searchpath[i]);
         for (var j = 0; j < files.length; j++) {
             var pluginPath = path.join(searchpath[i], files[j]);
+
+            if(files[j] == 'cordova-plugin-keyboard') {
+                plugin_path = path.join(searchpath[i], files[j], 'keyboard');
+            }
+
             if (tryPath(pluginPath)) {
                 return pluginPath;
             }
@@ -160,10 +165,13 @@ function findLocalPlugin(plugin_id, searchpath) {
 function copyPlugin(plugin_dir, plugins_dir, link) {
     var plugin_id = readId(plugin_dir);
     var dest = path.join(plugins_dir, plugin_id);
-    shell.rm('-rf', dest);
+    if(fs.existsSync(dest) && fs.lstatSync(dest).isSymbolicLink()) fs.unlinkSync(dest);
+    else shell.rm('-rf', dest);
     if (link) {
         events.emit('verbose', 'Linking plugin "' + plugin_dir + '" => "' + dest + '"');
-        fs.symlinkSync(plugin_dir, dest, 'dir');
+        // for `ln -s` command, when src path is relative, only the src path is relative to the target file/folder,
+        // then the link file is valid, so we use absolute path for src path.
+        fs.symlinkSync(path.resolve(plugin_dir), dest, 'dir');
     } else {
         shell.mkdir('-p', dest);
         events.emit('verbose', 'Copying plugin "' + plugin_dir + '" => "' + dest + '"');

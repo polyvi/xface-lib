@@ -28,7 +28,8 @@ var path = require('path')
 
 module.exports = {
     www_dir:function(project_dir) {
-        return path.join(project_dir, 'www');
+        var defaultAppId = require('../util/multiapp-helpers').findDefaultAppId(project_dir, 'ios');
+        return path.join(project_dir, 'xface3', defaultAppId);
     },
     package_name:function(project_dir) {
         var plist_file = glob.sync(path.join(project_dir, '**', '*-Info.plist'))[0];
@@ -174,7 +175,7 @@ module.exports = {
                            );
 
         config_files = config_files.filter(function (val) {
-            return !(/^build\//.test(val)) && !(/\/www\/config.xml$/.test(val));
+            return !(/build\//i.test(val)) && !(/\/xface3\/config.xml$/.test(val));
         });
 
         if (config_files.length === 0) {

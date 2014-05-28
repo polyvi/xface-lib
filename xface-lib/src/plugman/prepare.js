@@ -26,7 +26,8 @@ var platform_modules = require('./platforms'),
     wp7             = require('./platforms/wp7'),
     wp8             = require('./platforms/wp8'),
     windows8        = require('./platforms/windows8'),
-    common          = require('./platforms/common');
+    common          = require('./platforms/common'),
+    mapp_helpers    = require('./util/multiapp-helpers'),
     fs              = require('fs'),
     shell           = require('shelljs'),
     util            = require('util'),
@@ -75,7 +76,8 @@ module.exports = function handlePrepare(project_dir, platform, plugins_dir, www_
     // for windows phone platform we need to add all www resources to the .csproj file
     // first we need to remove them all to prevent duplicates
     var wp_csproj;
-    if(platform == 'wp7' || platform == 'wp8') {
+    var defaultAppId = mapp_helpers.findDefaultAppId(project_dir, platform);
+    if(platform == 'wp7') {
         wp_csproj = (platform == wp7? wp7.parseProjectFile(project_dir) : wp8.parseProjectFile(project_dir));
         var item_groups = wp_csproj.xml.findall('ItemGroup');
         for (var i = 0, l = item_groups.length; i < l; i++) {
@@ -83,7 +85,7 @@ module.exports = function handlePrepare(project_dir, platform, plugins_dir, www_
             var files = group.findall('Content');
             for (var j = 0, k = files.length; j < k; j++) {
                 var file = files[j];
-                if (file.attrib.Include.substr(0,11) == "www\\plugins" || file.attrib.Include == "www\\cordova_plugins.js") {
+                if (file.attrib.Include.substr(0,25) == "xface3\\" + defaultAppId + "\\plugins" || file.attrib.Include == "xface3\\" + defaultAppId + "\\cordova_plugins.js") {
                     // remove file reference
                     group.remove(0, file);
                     // remove ItemGroup if empty
@@ -156,6 +158,7 @@ module.exports = function handlePrepare(project_dir, platform, plugins_dir, www_
         assets = assets || [];
         assets.forEach(function(asset) {
             common.asset.install(asset, pluginDir, wwwDir);
+            mapp_helpers.installAssets(asset, pluginDir, project_dir, platform);
         });
 
         jsModules.forEach(function(module) {
@@ -181,8 +184,8 @@ module.exports = function handlePrepare(project_dir, platform, plugins_dir, www_
             var scriptContent = fs.readFileSync(path.join(pluginDir, fsPath), 'utf-8');
             scriptContent = 'cordova.define("' + moduleName + '", function(require, exports, module) { ' + scriptContent + '\n});\n';
             fs.writeFileSync(path.join(platformPluginsDir, plugin_id, fsPath), scriptContent, 'utf-8');
-            if(platform == 'wp7' || platform == 'wp8' || platform == "windows8") {
-                wp_csproj.addSourceFile(path.join('www', 'plugins', plugin_id, fsPath));
+                if(platform == 'wp7' || platform == "windows8") {
+                    wp_csproj.addSourceFile(path.join('xface3', defaultAppId, 'plugins', plugin_id, fsPath));
             }
 
             // Prepare the object for cordova_plugins.json.
@@ -225,8 +228,10 @@ module.exports = function handlePrepare(project_dir, platform, plugins_dir, www_
     events.emit('verbose', 'Writing out cordova_plugins.js...');
     fs.writeFileSync(path.join(wwwDir, 'cordova_plugins.js'), final_contents, 'utf-8');
 
-    if(platform == 'wp7' || platform == 'wp8' || platform == "windows8") {
-        wp_csproj.addSourceFile(path.join('www', 'cordova_plugins.js'));
+    mapp_helpers.overridePluginJs(project_dir, wwwDir, platform);
+
+    if(platform == 'wp7' || platform == "windows8") {
+        wp_csproj.addSourceFile(path.join('xface3', defaultAppId, 'cordova_plugins.js'));
         wp_csproj.write();
     }
 };

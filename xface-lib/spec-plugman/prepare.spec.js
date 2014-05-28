@@ -10,16 +10,18 @@ var platforms = require('../src/plugman/platforms'),
     plugins_dir = path.join(temp, 'plugins');
 
 var json = path.join(temp, 'assets', 'www', 'cordova_plugins.json');
-var js = path.join(temp, 'assets', 'www', 'cordova_plugins.js');
+var js = path.join(temp, 'assets', 'xface3', 'helloxface', 'cordova_plugins.js');
 
 describe('prepare', function() {
     var proc, platform_json, write, mkdir, rm;
     beforeEach(function() {
         rm = spyOn(shell, 'rm');
         mkdir = spyOn(shell, 'mkdir');
+        spyOn(shell, 'cp');
         proc = spyOn(config_changes, 'process');
         platform_json = spyOn(config_changes, 'get_platform_json').andReturn({installed_plugins:{},dependent_plugins:{},prepare_queue:{uninstalled:[]}});
         write = spyOn(fs, 'writeFileSync');
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'getInstalledApps').andReturn(['helloxface']);
     });
     it('should create cordova_plugins.js file in a custom www directory', function() {
         var custom_www = path.join(temp, 'assets', 'custom_www'),
@@ -48,7 +50,7 @@ describe('prepare', function() {
             });
             it('should remove any www/plugins directories related to plugins being queued for removal', function() {
                 prepare(temp, 'android', plugins_dir);
-                expect(rm).toHaveBeenCalledWith('-rf', path.join(temp, 'assets', 'www', 'plugins', 'nickelback'));
+                expect(rm).toHaveBeenCalledWith('-rf', path.join(temp, 'assets', 'xface3', 'helloxface', 'plugins', 'nickelback'));
             });
         });
     });

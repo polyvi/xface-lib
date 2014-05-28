@@ -81,7 +81,8 @@ module.exports.uninstallPlugin = function(id, plugins_dir, options) {
             return Q();
         }
 
-        shell.rm('-rf', plugin_dir);
+        if(fs.lstatSync(plugin_dir).isSymbolicLink()) fs.unlinkSync(plugin_dir);
+        else shell.rm('-rf', plugin_dir);
         events.emit('verbose', 'Deleted "'+ id +'"');
     };
 
@@ -232,6 +233,10 @@ function handleUninstall(actions, platform, plugin_id, plugin_et, project_dir, w
             frameworkFiles = platformTag.findall('./framework[@custom="true"]');
         assets = assets.concat(platformTag.findall('./asset'));
 
+        var proguardConfig = platformTag.find('./proguard-config'),
+            androidApplication = platformTag.find('./android-application'),
+            rootActivity = platformTag.find('./root-activity');
+
         // queue up native stuff
         sourceFiles && sourceFiles.forEach(function(source) {
             actions.push(actions.createAction(handler["source-file"].uninstall,
@@ -268,12 +273,34 @@ function handleUninstall(actions, platform, plugin_id, plugin_et, project_dir, w
                                               handler["lib-file"].install,
                                               [source, plugin_dir, project_dir, plugin_id]));
         });
+        if(proguardConfig) {
+            actions.push(actions.createAction(handler["proguard-config"].uninstall,
+	                                      [proguardConfig, project_dir],
+					      handler["proguard-config"].install,
+					      [proguardConfig, project_dir]));
+        }
+
+        if(androidApplication) {
+            actions.push(actions.createAction(handler["android-application"].uninstall,
+	                                      [androidApplication, plugins_dir, project_dir],
+					      handler["android-application"].install,
+					      [androidApplication, plugins_dir, project_dir]));
+        }
+
+        if(rootActivity) {
+            actions.push(actions.createAction(handler["root-activity"].uninstall,
+	                                      [rootActivity, plugins_dir, project_dir],
+					      handler["root-activity"].install,
+					      [rootActivity, plugins_dir, project_dir]));
+        }
     }
 
     // queue up asset installation
     var common = require('./platforms/common');
+    var mapp_helpers = require('./util/multiapp-helpers');
     assets && assets.forEach(function(asset) {
         actions.push(actions.createAction(common.asset.uninstall, [asset, www_dir, plugin_id], common.asset.install, [asset, plugin_dir, www_dir]));
+        actions.push(actions.createAction(mapp_helpers.uninstallAssets, [asset, plugin_id, project_dir, platform], mapp_helpers.installAssets, [asset, plugin_dir, project_dir, platform]));
     });
 
     // run through the action stack

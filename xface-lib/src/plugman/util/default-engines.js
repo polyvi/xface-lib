@@ -31,6 +31,12 @@ module.exports = function(project_dir){
         'windows-os' :
             { 'platform':'wp7|wp8|windows8', 'scriptSrc': path.join(project_dir,'cordova','win_os_version') },
         'windows-sdk' :
-            { 'platform':'wp7|wp8|windows8', 'scriptSrc': path.join(project_dir,'cordova','win_sdk_version') }
+            { 'platform':'wp7|wp8|windows8', 'scriptSrc': path.join(project_dir,'cordova','win_sdk_version') },
+        'xface':
+            { 'platform':'*', 'scriptSrc': path.join(project_dir, 'cordova', 'versionx') },
+        'xface-ios':
+            { 'platform':'ios', 'scriptSrc': path.join(project_dir, 'cordova', 'versionx') },
+        'xface-android':
+            { 'platform':'android', 'scriptSrc': path.join(project_dir, 'cordova', 'versionx') }
     }
 };

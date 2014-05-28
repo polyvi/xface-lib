@@ -18,7 +18,7 @@
 */
 var fs            = require('fs'),
     path          = require('path'),
-    CordovaError  = require('./CordovaError'),
+    CordovaError  = require('../CordovaError'),
     shell         = require('shelljs'),
     archiver      = require('archiver'),
     Q             = require('q'),
@@ -189,12 +189,12 @@ exports = module.exports = {
         }
     },
     /**
-     * »ñÈ¡Æ½Ì¨Ä¬ÈÏµÄlib¸ùÄ¿Â¼£¬¼´xface coreµÄ¸ùÄ¿Â¼
-     * @param projectRoot xFace¹¤³Ì¸ùÄ¿Â¼
-     * @param platform Æ½Ì¨Ãû³Æ
-     */
+    * è·å–å¹³å°é»˜è®¤çš„libæ ¹ç›®å½•ï¼Œå³xface coreçš„æ ¹ç›®å½•
+    * @param projectRoot xFaceå·¥ç¨‹æ ¹ç›®å½•
+    * @param platform å¹³å°åç§°
+    */
     getDefaultPlatformLibPath: function(projectRoot, platform) {
-        var platforms = require('../platforms');
+        var platforms = require('./platforms');
         if(!platforms.hasOwnProperty(platform)) {
             throw new Error('Platform `' + platform + '` is not valid! ');
         }
@@ -205,10 +205,10 @@ exports = module.exports = {
         }
     },
     /**
-     * ½«Ò»¸öÎÄ¼ş/Ä¿Â¼Ñ¹ËõÎªÒ»¸özipÎÄ¼ş
-     * @param {String} filePath Ô´ÎÄ¼ş£¨¼Ğ£©Â·¾¶£¬Èç¹ûÒÔ*½áÎ²£¬ÔòÖ»Ñ¹ËõÎÄ¼ş¼ĞµÄÄÚÈİ£¨ÈçÂ·¾¶Îª/a/b/*£¬ÔòÖ»Ñ¹Ëõ/a/bÏÂµÄ×ÓÎÄ¼ş»ò×ÓÄ¿Â¼£©
-     * @param {String} zipPath Ä¿±êzipÎÄ¼şÂ·¾¶
-     */
+    * å°†ä¸€ä¸ªæ–‡ä»¶/ç›®å½•å‹ç¼©ä¸ºä¸€ä¸ªzipæ–‡ä»¶
+    * @param {String} filePath æºæ–‡ä»¶ï¼ˆå¤¹ï¼‰è·¯å¾„ï¼Œå¦‚æœä»¥*ç»“å°¾ï¼Œåˆ™åªå‹ç¼©æ–‡ä»¶å¤¹çš„å†…å®¹ï¼ˆå¦‚è·¯å¾„ä¸º/a/b/*ï¼Œåˆ™åªå‹ç¼©/a/bä¸‹çš„å­æ–‡ä»¶æˆ–å­ç›®å½•ï¼‰
+    * @param {String} zipPath ç›®æ ‡zipæ–‡ä»¶è·¯å¾„
+    */
     zipFolder: function(filePath, zipPath) {
         var zip = archiver('zip');
             wildcard = (path.basename(filePath) == '*'),
@@ -243,7 +243,7 @@ exports = module.exports = {
     },
     getDefaultAppId: function(platformProj) {
         var platform = path.basename(platformProj),
-            parser = require('../platforms')[platform].parser;
+            parser = require('./platforms')[platform].parser;
         var configXml = new parser(platformProj).config_xml();
         var doc = xml.parseElementtreeSync(configXml),
             appTag = doc.find('pre_install_packages/app_package');

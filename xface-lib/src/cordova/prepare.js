@@ -26,10 +26,11 @@ var cordova_util      = require('./util'),
     et                = require('elementtree'),
     hooker            = require('./hooker'),
     lazy_load         = require('./lazy_load'),
+    config            = require('./config'),
     events            = require('./events'),
     Q                 = require('q'),
     plugman           = require('../plugman/plugman'),
-    xml_helpers       = require('./xml-helpers'),
+    xml_helpers       = require('../util/xml-helpers'),
     util              = require('util');
 
 // Returns a promise.

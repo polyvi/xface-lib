@@ -18,8 +18,8 @@
 */
 
 // For now expose plagman and cordova just as they were in the old repos
-exports.plugman = require('./src/plugman/plugman');
-exports.cordova = require('./src/cordova/cordova');
+exports.xplugin = require('./src/plugman/plugman');
+exports.xface = require('./src/cordova/cordova');
 exports.cordova_platforms = require('./src/cordova/platforms');
 
 

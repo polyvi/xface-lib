@@ -39,6 +39,7 @@ describe('start', function() {
         shell.cp('-R', path.join(srcProject, '*'), project);
         shell.cp('-R', path.join(srcProject, '*'), project2);
 
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'getInstalledApps').andReturn(['helloxface']);
         done = false;
         promise = Q()
         .then(
@@ -72,6 +73,7 @@ describe('uninstallPlatform', function() {
         spyOn(shell, 'cp').andReturn(true);
         add_to_queue = spyOn(config_changes, 'add_uninstalled_plugin_to_prepare_queue');
         done = false;
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'getInstalledApps').andReturn(['helloxface']);
     });
     describe('success', function() {
         it('should call prepare after a successful uninstall', function() {
@@ -98,7 +100,7 @@ describe('uninstallPlatform', function() {
             });
             waitsFor(function() { return done; }, 'promise never resolved', 200);
             runs(function() {
-                expect(actions_push.calls.length).toEqual(5);
+                expect(actions_push.calls.length).toEqual(7);
                 expect(proc).toHaveBeenCalled();
             });
         });
@@ -217,6 +219,7 @@ describe('uninstall', function() {
         rm = spyOn(shell, 'rm').andReturn(true);
         add_to_queue = spyOn(config_changes, 'add_uninstalled_plugin_to_prepare_queue');
         done = false;
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'getInstalledApps').andReturn(['helloxface']);
     });
     describe('success', function() {
         it('should call the config-changes module\'s add_uninstalled_plugin_to_prepare_queue method after processing an install', function() {
@@ -256,6 +259,7 @@ describe('end', function() {
 
     it('end', function() {
         done = false;
+        spyOn(require('../src/plugman/util/multiapp-helpers'), 'getInstalledApps').andReturn(['helloxface']);
 
         promise.then(
             function(){

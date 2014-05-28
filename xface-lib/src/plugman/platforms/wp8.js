@@ -27,7 +27,8 @@ var common = require('./common'),
 
 module.exports = {
     www_dir:function(project_dir) {
-        return path.join(project_dir, 'www');
+        var defaultAppId = require('../util/multiapp-helpers').findDefaultAppId(project_dir, 'wp8');
+        return path.join(project_dir, 'xface3', defaultAppId);
     },
     package_name:function(project_dir) {
         return xml_helpers.parseElementtreeSync(path.join(project_dir, 'Properties', 'WMAppManifest.xml')).find('App').attrib.ProductID;
