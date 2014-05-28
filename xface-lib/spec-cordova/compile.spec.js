@@ -47,6 +47,7 @@ describe('compile command', function() {
         list_platforms = spyOn(util, 'listPlatforms').andReturn(supported_platforms);
         fire = spyOn(hooker.prototype, 'fire').andReturn(Q());
         spyOn(superspawn, 'spawn').andCallFake(function() { return Q() });
+        spyOn(fs, 'readdirSync').andReturn(['test.xcodeproj']);
     });
     describe('failure', function() {
         it('should not run inside a xFace-based project with no added platforms by calling util.listPlatforms', function() {
@@ -67,7 +68,7 @@ describe('compile command', function() {
         it('should run inside a xFace-based project with at least one added platform and shell out to build', function(done) {
             cordova.raw.compile(['android','ios']).then(function() {
                 expect(superspawn.spawn).toHaveBeenCalledWith(path.join(project_dir, 'platforms', 'android', 'cordova', 'build'), [], jasmine.any(Object));
-                expect(superspawn.spawn).toHaveBeenCalledWith(path.join(project_dir, 'platforms', 'ios', 'cordova', 'build'), [], jasmine.any(Object));
+                expect(superspawn.spawn).toHaveBeenCalledWith(path.join(project_dir, 'platforms', 'ios', 'cordova', 'build'), ['--device'], jasmine.any(Object));
                 done();
             });
         });

@@ -31,8 +31,8 @@ var cordova = require('../src/cordova/cordova'),
 var platform = os.platform();
 var tmpDir = helpers.tmpDir('hooks_test');
 var project = path.join(tmpDir, 'project');
-var dotCordova = path.join(project, '.cordova');
-var hooksDir = path.join(project, '.cordova', 'hooks');
+var dotCordova = path.join(project, '.xface');
+var hooksDir = path.join(project, '.xface', 'hooks');
 var ext = platform.match(/(win32|win64)/)?'bat':'sh';
 
 
@@ -47,7 +47,7 @@ shell.chmod('-R', 'ug+x', hooksDir);
 
 
 describe('hooker', function() {
-    it('should throw if provided directory is not a cordova project', function() {
+    it('should throw if provided directory is not a xface project', function() {
         expect(function() {
             new hooker(tmpDir);
         }).toThrow();

@@ -34,7 +34,7 @@ var cordova = require('../src/cordova/cordova'),
     hooks = path.join(fixtures, 'hooks');
 
 var project_dir = '/some/path';
-var supported_platforms = Object.keys(platforms).filter(function(p) { return p != 'www'; });
+var supported_platforms = Object.keys(platforms).filter(function(p) { return p != 'www' && p != 'test-template'; });
 var supported_platforms_paths = supported_platforms.map(function(p) { return path.join(project_dir, 'platforms', p, 'www'); });
 
 var TEST_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -106,7 +106,7 @@ describe('prepare command', function() {
             Q().then(prepare).then(function() {
                 expect('this call').toBe('fail');
             }, function(err) {
-                expect('' + err).toContain('Current working directory is not a Cordova-based project.');
+                expect('' + err).toContain('Current working directory is not a xFace-based project.');
             }).fin(done);
         });
         it('should not run inside a cordova-based project with no platforms', function(done) {
@@ -114,7 +114,7 @@ describe('prepare command', function() {
             Q().then(prepare).then(function() {
                 expect('this call').toBe('fail');
             }, function(err) {
-                expect('' + err).toContain('No platforms added to this project. Please use `cordova platform add <platform>`.');
+                expect('' + err).toContain('No platforms added to this project. Please use `xface platform add <platform>`.');
             }).fin(done);
         });
     });
@@ -151,7 +151,7 @@ describe('prepare command', function() {
                     var plugins_dir = path.join(project_dir, 'plugins');
                     supported_platforms.forEach(function(p) {
                         var platform_path = path.join(project_dir, 'platforms', p);
-                        expect(plugman_prepare).toHaveBeenCalledWith(platform_path, (p=='blackberry'?'blackberry10':p), plugins_dir);
+                        expect(plugman_prepare).toHaveBeenCalledWith(platform_path, (p=='blackberry'?'blackberry10':p), plugins_dir, jasmine.any(String));
                     });
                 }, function(err) {
                     expect(err).toBeUndefined();

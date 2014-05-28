@@ -46,7 +46,7 @@ describe('run command', function() {
             Q().then(cordova.raw.run).then(function() {
                 expect('this call').toBe('fail');
             }, function(err) {
-                expect(err.message).toEqual('No platforms added to this project. Please use `cordova platform add <platform>`.');
+                expect(err.message).toEqual('No platforms added to this project. Please use `xface platform add <platform>`.');
             }).fin(done);
         });
         it('should not run outside of a Cordova-based project', function(done) {
@@ -106,7 +106,7 @@ describe('run command', function() {
                     expect('this call').toBe('fail');
                 }, function(err) {
                     expect(fire).not.toHaveBeenCalled();
-                    expect(err.message).toEqual('No platforms added to this project. Please use `cordova platform add <platform>`.');
+                    expect(err.message).toEqual('No platforms added to this project. Please use `xface platform add <platform>`.');
                 }).fin(done);
             });
         });

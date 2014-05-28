@@ -114,4 +114,5 @@ function modifyBuildArchitecture(buildPath, archs) {
     var archsStr = archs.join(' '),
         replacement = origin.replace(explicitExpr, '$1' + archsStr + '$2' + archsStr + '$3');
     fs.writeFileSync(buildPath, content.replace(origin, replacement), 'utf-8');
+    console.log('=================2');
 }

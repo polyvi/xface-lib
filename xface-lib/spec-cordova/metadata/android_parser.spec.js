@@ -26,6 +26,7 @@ var platforms = require('../../src/cordova/platforms'),
     Q = require('q'),
     config = require('../../src/cordova/config'),
     ConfigParser = require('../../src/cordova/ConfigParser'),
+    mapp_helpers = require('../../src/plugman/util/multiapp-helpers'),
     cordova = require('../../src/cordova/cordova');
 
 // Create a real config object before mocking out everything.
@@ -52,7 +53,7 @@ describe('android project parser', function() {
         spyOn(config, 'has_custom_path').andReturn(false);
         spyOn(util, 'getDefaultAppId').andReturn('helloxface');
         spyOn(mapp_helpers, 'getInstalledApps').andReturn(['helloxface']);
-        spyOn(require('xplugin').platforms['android'], 'activity_name').andReturn('com.polyvi.Activity');
+        spyOn(require('../../src/plugman/platforms')['android'], 'activity_name').andReturn('com.polyvi.Activity');
     });
 
     function wrapper(p, done, post) {
