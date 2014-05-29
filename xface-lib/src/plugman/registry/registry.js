@@ -12,7 +12,7 @@ var npm = require('npm'),
     tar = require('tar'),
     shell = require('shelljs'),
     home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-    plugmanConfigDir = path.resolve(home, '.plugman'),
+    plugmanConfigDir = path.resolve(home, '.xplugin'),
     plugmanCacheDir = path.resolve(plugmanConfigDir, 'cache');
 
 
@@ -90,7 +90,7 @@ module.exports = {
         .then(function(settings) {
             return Q.ninvoke(npm, 'load', settings);
         }).then(function() {
-            return Q.ninvoke(npm.commands, 'search', args, true);
+            return Q.ninvoke(npm.commands, 'search', args, false /*silent*/);
         });
     },
 
@@ -152,7 +152,7 @@ module.exports = {
             // even when it has a recent .cache.json file.
             npm.config.set('cache-min', 0);
             npm.config.set('cache-max', 0);
-            return Q.ninvoke(npm.commands, 'view', [plugin], /* silent = */ true );
+            return Q.ninvoke(npm.commands, 'view', [plugin], /* silent = */ false );
         })
         .then(function(info) {
             // Plugin info should be accessed as info[version]. If a version

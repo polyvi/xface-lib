@@ -20,6 +20,7 @@
 // For now expose plagman and cordova just as they were in the old repos
 exports.xplugin = require('./src/plugman/plugman');
 exports.xface = require('./src/cordova/cordova');
+exports.xmen = require('./src/xmen/xmen');
 exports.cordova_platforms = require('./src/cordova/platforms');
 
 
