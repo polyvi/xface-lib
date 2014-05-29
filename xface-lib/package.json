@@ -1,6 +1,6 @@
 {
   "name": "xface-lib",
-  "version": "3.3.0-dev",
+  "version": "3.2.0",
   "preferGlobal": "true",
   "description": "xFace tools core lib and API",
   "main": "xface-lib",
