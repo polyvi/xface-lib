@@ -97,9 +97,9 @@ module.exports = function plugin(command, targets, opts) {
             } else if (opts.searchpath) {
                 searchPath = opts.searchpath.concat(searchPath);
             }
-	    if(config.internalDev(projectRoot)) {
-	        searchPath = searchPath.push(cordova_util.getRepoSetPath());
-	    }
+            if(config.internalDev(projectRoot)) {
+                searchPath.push(cordova_util.getRepoSetPath());
+            }
             // Blank it out to appease unit tests.
             if (searchPath.length === 0) {
                 searchPath = undefined;
