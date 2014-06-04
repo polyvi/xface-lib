@@ -1,0 +1,155 @@
+{
+  "name": "xface-lib",
+  "version": "3.3.0-0.0.1",
+  "preferGlobal": "true",
+  "description": "xFace tools core lib and API",
+  "main": "xface-lib",
+  "engines": {
+    "node": ">=0.9.9"
+  },
+  "engineStrict": true,
+  "scripts": {
+    "test": "jasmine-node --color spec-plugman spec-cordova"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.polyvi.com:xface/xface-lib.git"
+  },
+  "bugs": {
+    "url": "http://gitlab.polyvi.com/xface/xface-lib/issues",
+    "email": "chenxy@polyvi.com"
+  },
+  "dependencies": {
+    "glob": "3.2.x",
+    "elementtree": "0.1.5",
+    "xcode": "0.6.6",
+    "ncp": "0.4.2",
+    "colors": ">=0.6.0",
+    "fs-extra": "~0.8.0",
+    "imagemagick": "~0.1.3",
+    "adm-zip": "~0.4.3",
+    "request": "~2.31.0",
+    "plist-with-patches": "0.5.x",
+    "bplist-parser": "0.0.x",
+    "shelljs": "0.1.x",
+    "underscore": "1.4.4",
+    "dep-graph": "1.1.0",
+    "semver": "2.0.x",
+    "q": "~0.9",
+    "optimist": "0.6.0",
+    "jsdom-nogyp": "~0.8.3",
+    "archiver": "~0.4.10",
+    "ncallbacks": "1.0.0",
+    "prompt": "0.2.7",
+    "npm": "1.3.4",
+    "rc": "0.3.0",
+    "tar": "0.1.x",
+    "npmconf": "0.1.x",
+    "mime": "~1.2.11",
+    "osenv": "0.0.x"
+  },
+  "devDependencies": {
+    "temp": "0.6.x",
+    "jasmine-node": "~1"
+  },
+  "author": "Anis Kadri",
+  "contributors": [
+    {
+      "name": "Brian LeRoux",
+      "email": "b@brian.io"
+    },
+    {
+      "name": "Fil Maj",
+      "email": "maj.fil@gmail.com"
+    },
+    {
+      "name": "Mike Reinstein",
+      "email": "reinstein.mike@gmail.com"
+    },
+    {
+      "name": "Darry Pogue",
+      "email": "darryl@dpogue.ca"
+    },
+    {
+      "name": "Michael Brooks",
+      "email": "michael@michaelbrooks.ca"
+    },
+    {
+      "name": "Braden Shepherdson",
+      "email": "braden@chromium.org"
+    },
+    {
+      "name": "Gord Tanner",
+      "email": "gtanner@gmail.com"
+    },
+    {
+      "name": "Tim Kim",
+      "email": "timk@adobe.com"
+    },
+    {
+      "name": "Benn Mapes",
+      "email": "Benn.Mapes@gmail.com"
+    },
+    {
+      "name": "Michael Wolf",
+      "email": "Michael.Wolf@Cynergy.com"
+    },
+    {
+      "name": "Andrew Grieve",
+      "email": "agrieve@chromium.org"
+    },
+    {
+      "name": "Bryan Higgins",
+      "email": "bhiggins@blackberry.com"
+    },
+    {
+      "name": "Don Coleman",
+      "email": "dcoleman@chariotsolutions.com"
+    },
+    {
+      "name": "Germano Gabbianelli",
+      "email": "tyron.mx@gmail.com"
+    },
+    {
+      "name": "Ian Clelland",
+      "email": "iclelland@chromium.org"
+    },
+    {
+      "name": "Lucas Holmqust",
+      "email": "lholmqui@redhat.com"
+    },
+    {
+      "name": "Matt LeGrand",
+      "email": "mlegrand@gmail.com"
+    },
+    {
+      "name": "Michal Mocny",
+      "email": "mmocny@gmail.com"
+    },
+    {
+      "name": "Sam Breed",
+      "email": "sam@quickleft.com"
+    },
+    {
+      "name": "Tommy-Carlos Williams",
+      "email": "tommy@devgeeks.org"
+    },
+    {
+      "name": "Rubén Norte",
+      "email": "rubennorte@gmail.com"
+    },
+    {
+      "name": "Germano Gabbianelli",
+      "email": "tyrion.mx@gmail.com"
+    },
+    {
+      "name": "Steven Gill",
+      "email": "stevengill97@gmail.com"
+    },
+    {
+      "name": "Jesse",
+      "email": "purplecabbage@gmail.com"
+    }
+  ],
+  "license": "Apache version 2.0"
+}
