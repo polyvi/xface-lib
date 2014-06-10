@@ -128,7 +128,7 @@ describe('registry', function() {
             var params = ['dummyplugin', 'plugin'];
             registryPromise(true, registry.search(params).then(function() {
                 expect(fakeLoad).toHaveBeenCalledWith(registry.settings, jasmine.any(Function));
-                expect(fakeNPMCommands.search).toHaveBeenCalledWith(params, true, jasmine.any(Function));
+                expect(fakeNPMCommands.search).toHaveBeenCalledWith(params, false, jasmine.any(Function));
             }));
         });
     });
