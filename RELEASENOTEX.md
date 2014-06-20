@@ -1698,3 +1698,11 @@
  *  [npm] nodeunit@0.6.4
  *  initial package.json
  *  liftoff
+
+
+## 3.3.0 (Fri Jun 20 2014)
+
+
+ *  解决单元测试不过的问题
+ *  提交新的config.xml模板，解决ios平台不能获取应用id的bug
+ *  解决3.3.0-0.0.1版本发布时写了错误的package.json文件

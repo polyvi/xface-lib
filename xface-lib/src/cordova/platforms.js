@@ -22,12 +22,12 @@ module.exports = {
         hostos : ['darwin'],
         parser : './metadata/ios_parser',
         url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-ios.git',
-        version: '3.3.0-rc1'
+        version: '3.3.0'
     },
     'android' : {
         parser : './metadata/android_parser',
         url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-android.git',
-        version: '3.3.0-rc1'
+        version: '3.3.0'
     },
     'ubuntu' : {
         hostos : ['linux'],
@@ -62,7 +62,7 @@ module.exports = {
     'www':{
         hostos : [],
         url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-default-app.git',
-        version: '3.3.0-rc1'
+        version: '3.3.0'
     },
     'firefoxos':{
         parser: './metadata/firefoxos_parser',
@@ -78,7 +78,7 @@ module.exports = {
     },
     'test-template':{
         url    : 'http://www.polyvi.net:8542/gitweb/gitweb.cgi?p=xface/xface-test-template.git',
-        version: '3.3.0-rc1'
+        version: '3.3.0'
     }
 };
 

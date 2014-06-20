@@ -1,6 +1,6 @@
 {
   "name": "xface-lib",
-  "version": "3.3.0-0.0.1",
+  "version": "3.3.0",
   "preferGlobal": "true",
   "description": "xFace tools core lib and API",
   "main": "xface-lib",
@@ -32,8 +32,8 @@
     "plist-with-patches": "0.5.x",
     "bplist-parser": "0.0.x",
     "shelljs": "0.1.x",
-    "underscore":"1.4.4",
-    "dep-graph":"1.1.0",
+    "underscore": "1.4.4",
+    "dep-graph": "1.1.0",
     "semver": "2.0.x",
     "q": "~0.9",
     "optimist": "0.6.0",
